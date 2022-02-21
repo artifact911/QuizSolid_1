@@ -1,4 +1,4 @@
-package org.example.model;
+package model;
 
 public class Word {
     public String russian;
