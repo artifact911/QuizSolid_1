@@ -1,43 +1,24 @@
-import model.Word;
+import service.Dialog;
+import service.Exam;
+import service.IParser;
+import service.ParserWord;
+import service.ParserWordReverse;
+import service.Shuffler;
+import service.Storage;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
 
 public class Program {
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Program.class.getResourceAsStream("words.csv")));
-        List<Word> list = new ArrayList<>();
+    //   BufferedReader reader = new BufferedReader(new InputStreamReader(Program.class.getResourceAsStream("words.csv")));
 
-        while (reader.ready()) {
-            String line = reader.readLine();
-            String[] items = line.split(",", 2);
-            Word word = new Word(items[0].trim(), items[1].trim());
-            list.add(word);
-        }
-
-        int count = 5;
-        Collections.shuffle(list);
-        list = list.subList(0, count);
-        Scanner scanner = new Scanner(System.in);
-        int points = 0;
-
-        for (Word word : list) {
-//            System.out.println(word.english);
-            System.out.print(word.russian + ": ");
-            String answer = scanner.nextLine().trim();
-            if(answer.equalsIgnoreCase(word.english)){
-                points++;
-            } else {
-                System.out.println("правильный ответ: " + word.english);
-            }
-        }
-        int percent = 100 * points / count;
-        System.err.println("Ваш результат: " + percent + "%");
+        IParser parser = new ParserWord();
+        //IParser parserWordReverse = new ParserWordReverse();
+        Storage storage = new Storage("/words.csv", parser);
+        Shuffler shuffler = new Shuffler(storage);
+        Dialog dialog = new Dialog();
+        Exam exam = new Exam(dialog, shuffler);
+        exam.start(3);
     }
 }
